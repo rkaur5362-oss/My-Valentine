@@ -4,15 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>For James 💘</title>
-
   <style>
     :root{
       --bg1:#120014; --bg2:#3a0038;
-      --pink:#ff4da6; --rose:#ff2d55; --gold:#ffd36b;
+      --card:#ffffff12; --border:#ffffff26;
       --text:#fff; --muted:#ffffffc9;
+      --pink:#ff4da6; --rose:#ff2d55; --gold:#ffd36b;
     }
     *{box-sizing:border-box}
-
     body{
       margin:0; min-height:100vh; display:grid; place-items:center;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
@@ -24,204 +23,279 @@
       overflow:hidden;
     }
 
-    /* Floating hearts */
+    /* floating hearts */
     .heart{
       position:absolute;
-      width:18px;height:18px;
+      width:18px; height:18px;
       transform:rotate(45deg);
-      background:var(--rose);
-      opacity:.18;
+      background: var(--rose);
+      opacity:.20;
+      filter: drop-shadow(0 10px 18px #0008);
       animation: floatUp linear infinite;
       pointer-events:none;
     }
     .heart::before,.heart::after{
-      content:""; position:absolute;
-      width:18px;height:18px;border-radius:50%;
-      background:inherit;
+      content:"";
+      position:absolute;
+      width:18px; height:18px;
+      border-radius:50%;
+      background: var(--rose);
     }
-    .heart::before{left:-9px}
-    .heart::after{top:-9px}
+    .heart::before{ left:-9px; top:0 }
+    .heart::after{ left:0; top:-9px }
     @keyframes floatUp{
-      from{transform:translateY(40vh) rotate(45deg)}
-      to{transform:translateY(-120vh) rotate(45deg)}
+      from{ transform: translateY(35vh) rotate(45deg) scale(.9); }
+      to  { transform: translateY(-130vh) rotate(45deg) scale(1.25); }
     }
 
+    .wrap{ width:min(760px,92vw); padding:24px; }
     .card{
       position:relative;
-      background:#ffffff14;
-      border:1px solid #ffffff2a;
-      border-radius:26px;
-      padding:28px 22px;
+      background: linear-gradient(180deg, #ffffff18, #ffffff0b);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      padding: 28px 22px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 18px 60px #0007;
       text-align:center;
-      box-shadow:0 18px 60px #0007;
-      max-width:720px;width:92vw;
-      backdrop-filter:blur(10px);
-      z-index:2;
+      overflow:hidden;
+    }
+    .sparkle{
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(600px 240px at 10% 10%, #ffd36b22, transparent 60%),
+        radial-gradient(520px 220px at 90% 30%, #ff4da622, transparent 60%);
+      pointer-events:none;
     }
 
     .big-heart{
-      width:86px;height:86px;margin:0 auto 16px;
-      transform:rotate(45deg);
-      background:linear-gradient(135deg,var(--pink),var(--rose));
-      border-radius:18px;
+      width:86px; height:86px; margin: 4px auto 16px;
+      transform: rotate(45deg);
+      background: linear-gradient(135deg, var(--pink), var(--rose));
+      border-radius: 18px;
       position:relative;
-      animation:pulse 1.2s ease-in-out infinite;
+      animation: pulse 1.2s ease-in-out infinite;
+      box-shadow: 0 14px 34px #ff2d5533;
     }
     .big-heart::before,.big-heart::after{
-      content:"";width:86px;height:86px;
-      position:absolute;border-radius:50%;
-      background:inherit;
+      content:""; width:86px; height:86px; position:absolute; border-radius:50%;
+      background: linear-gradient(135deg, var(--pink), var(--rose));
     }
-    .big-heart::before{left:-43px}
-    .big-heart::after{top:-43px}
-    @keyframes pulse{
-      0%,100%{transform:rotate(45deg) scale(1)}
-      50%{transform:rotate(45deg) scale(1.08)}
-    }
+    .big-heart::before{ left:-43px; top:0 }
+    .big-heart::after{ left:0; top:-43px }
+    @keyframes pulse{ 0%,100%{ transform:rotate(45deg) scale(1)} 50%{ transform:rotate(45deg) scale(1.08)} }
 
-    h1{margin:0 0 10px;font-size:42px}
-    p{margin:0 0 14px;color:var(--muted);font-size:18px}
+    h1{ margin:0 0 10px; font-size: clamp(28px, 5vw, 44px); }
+    p{ margin:0 0 14px; color:var(--muted); font-size: clamp(15px,2.6vw,18px); line-height:1.55; }
+    .q{ font-weight:800; color:#fff; font-size: clamp(18px,3.1vw,22px); margin-top:8px; }
 
-    .buttons{
-      display:flex;gap:12px;justify-content:center;margin-top:16px;
-    }
+    .btns{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top: 14px; position:relative; }
     button{
-      border:0;cursor:pointer;
-      padding:12px 16px;border-radius:14px;
-      font-weight:800;font-size:16px;
+      border:0; cursor:pointer;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 16px;
+      transition: transform .12s ease, filter .12s ease;
+      user-select:none;
     }
-    .yes{background:linear-gradient(135deg,var(--gold),#ff9bd1);color:#2a0030}
+    button:active{ transform: translateY(1px) scale(.99); }
+
+    .yes{
+      background: linear-gradient(135deg, var(--gold), #ff9bd1);
+      color:#2a0030;
+      box-shadow: 0 14px 30px #ffd36b24;
+    }
+
+    /* NO button is positioned so it can "run away" */
     .no{
-      background:#ffffff20;color:#fff;border:1px solid #ffffff2a;
-      position:relative;
+      background: #ffffff12;
+      color: #fff;
+      border: 1px solid #ffffff2a;
+      position: relative;
+      will-change: transform;
     }
 
-    .note{margin-top:14px;font-size:14px;color:#ffffffa6}
-
-    .secret{
-      display:none;
-      margin-top:18px;
-      background:#0c0010cc;
-      border:1px solid #ffffff24;
-      border-radius:16px;
-      padding:14px;
-      text-align:left;
-    }
-
-    .actions{
-      display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;
-    }
-    .pill{
-      padding:10px 14px;border-radius:999px;
-      background:#ffffff12;color:#fff;
-      border:1px solid #ffffff26;
-      text-decoration:none;font-weight:800;
-    }
-    .pill.gold{
-      background:linear-gradient(135deg,var(--gold),#ff9bd1);
-      color:#2a0030;border:0;
+    .note{
+      margin-top:14px; text-align:center; font-size: 14px; color:#ffffffa6;
     }
 
     .toast{
-      position:fixed;left:50%;bottom:22px;
-      transform:translateX(-50%);
-      background:#0c0010cc;
-      border:1px solid #ffffff24;
-      padding:10px 14px;border-radius:12px;
-      opacity:0;transition:.25s;
-      backdrop-filter:blur(10px);
+      position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+      background:#0c0010cc; border:1px solid #ffffff24;
+      padding:10px 14px; border-radius: 12px;
+      opacity:0; pointer-events:none;
+      transition: opacity .22s ease, transform .22s ease;
+      backdrop-filter: blur(10px);
+      max-width: 92vw;
+      text-align:center;
     }
-    .toast.show{opacity:1}
+    .toast.show{ opacity:1; transform:translateX(-50%) translateY(-6px); }
+
+    /* ✅ Fade-in for secret box */
+    .secret-box{
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .secret-box.show{
+      opacity: 1;
+      transform: translateY(0);
+    }
   </style>
 </head>
-
 <body>
 
-  <div class="card">
-    <div class="big-heart"></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="sparkle"></div>
+      <div class="big-heart" aria-hidden="true"></div>
 
-    <h1>Hi Love 💘</h1>
-    <p>I made you a tiny little corner of the internet for one important question…</p>
-    <p><strong>Will you be my Valentine? ❤️</strong></p>
+      <h1>Hi Love 💘</h1>
+      <p>I made you a tiny little corner of the internet for one important question…</p>
+      <p class="q">Will you be my Valentine? ❤️</p>
 
-    <div class="buttons">
-      <button class="yes" id="yesBtn">YES! 🥰</button>
-      <button class="no" id="noBtn">Not a chance 😏</button>
-    </div>
-
-    <div class="note" id="note">(P.S. Try clicking “NO” 😌)</div>
-
-    <div class="secret" id="secret">
-      <b>Secret unlocked 💌</b><br/>
-      CAN'T WAIT TO CELEBRATE OUR FIRST VALENTINE IN PERSON 💖💖💖
-
-      <div class="actions">
-        <a class="pill gold" id="calLink" target="_blank">Add our date to my calendar 📅</a>
-        <a class="pill" href="sms:&body=YES 💘">Text me YES 💬</a>
+      <div class="btns">
+        <button class="yes" id="yesBtn">YES! 🥰</button>
+        <button class="no" id="noBtn">Not a chance 😏</button>
       </div>
 
-      <div style="margin-top:10px;color:#ffffffc9">
-        A little date plan, just for us…<br/> 
-        📍 North End, Boston<br/> 
-        🍝 <b>You choose the restaurant you’re craving</b><br/> 
-        💕 And we’ll make the rest special together
+      <div class="note" id="note">(P.S. Try clicking “NO” 😌)</div>
+
+      <!-- ✅ Secret box (hidden until YES) -->
+      <div class="secret-box" id="secretBox" style="margin-top:16px; padding:16px; border-radius:16px; border:1px solid #ffffff24; background:#0c001066;">
+        <div style="font-weight:800; margin-bottom:6px;">Secret unlocked 💌</div>
+        <div id="secretText" style="color:#ffffffd6; line-height:1.5;">
+          CAN'T WAIT TO CELEBRATE OUR FIRST VALENTINE IN PERSON 💖💖💖
+        </div>
+
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:12px;">
+          <!-- ✅ Calendar link (replace with your real link if needed) -->
+          <a id="calendarLink" href="#" style="text-decoration:none;">
+            <button class="yes" style="padding:10px 14px;">Add our date to my calendar 📅</button>
+          </a>
+
+          <!-- Optional "text me" button -->
+          <a href="sms:&body=YES!%20💖" style="text-decoration:none;">
+            <button class="no" style="padding:10px 14px;">Text me YES 💬</button>
+          </a>
+        </div>
+
+        <!-- ✅ Date confirmation copy (romantic line) -->
+        <div style="margin-top:10px;color:#ffffffc9; line-height:1.5">
+          A little date plan, just for us…<br/>
+          📍 North End, Boston<br/>
+          🍝 <b>You choose the restaurant you’re craving</b><br/>
+          💕 And we’ll make the rest special together
+        </div>
       </div>
+
     </div>
   </div>
 
   <div class="toast" id="toast"></div>
 
+  <!-- ✅ Soft heartbeat sound -->
+  <audio id="heartbeat" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-heartbeat-1220.mp3" type="audio/mpeg">
+  </audio>
+
   <script>
-    // Floating hearts
-    function makeHeart(){
-      const h=document.createElement("div");
-      h.className="heart";
-      h.style.left=Math.random()*100+"vw";
-      h.style.animationDuration=(Math.random()*6+6)+"s";
+    // Background floating hearts
+    const makeHeart = () => {
+      const h = document.createElement('div');
+      h.className = 'heart';
+      const size = Math.random() * 18 + 10; // 10–28
+      h.style.width = h.style.height = size + 'px';
+      h.style.left = (Math.random() * 100) + 'vw';
+      h.style.animationDuration = (Math.random() * 6 + 6) + 's';
+      h.style.opacity = (Math.random() * 0.18 + 0.10).toFixed(2);
       document.body.appendChild(h);
-      setTimeout(()=>h.remove(),12000);
-    }
-    setInterval(makeHeart,500);
+      setTimeout(() => h.remove(), 13000);
+    };
+    for (let i=0;i<18;i++) setTimeout(makeHeart, i*260);
+    setInterval(makeHeart, 480);
 
-    // Toast
-    const toast=document.getElementById("toast");
-    function showToast(msg){
-      toast.textContent=msg;
-      toast.classList.add("show");
-      setTimeout(()=>toast.classList.remove("show"),5000);
+    // Toast helper
+    const toast = document.getElementById('toast');
+    const showToast = (msg, ms=2600) => {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => toast.classList.remove('show'), ms);
+    };
+
+    // Mini confetti hearts burst
+    function confettiHearts(){
+      for(let i=0;i<22;i++){
+        const c = document.createElement('div');
+        c.className='heart';
+        const size = Math.random()*12 + 10;
+        c.style.width = c.style.height = size+'px';
+        c.style.left = (50 + (Math.random()*10-5)) + 'vw';
+        c.style.top = '70vh';
+        c.style.opacity = 0.6;
+        c.style.animationDuration = (Math.random()*1.6 + 1.3) + 's';
+        c.style.transform = `translate(${Math.random()*420-210}px, ${Math.random()*-300-140}px) rotate(45deg)`;
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(), 2600);
+      }
     }
 
-    // Runaway NO button
-    const noBtn=document.getElementById("noBtn");
-    noBtn.addEventListener("mouseenter",()=>{
-      const x=Math.random()*260-130;
-      const y=Math.random()*160-80;
-      noBtn.style.transform=`translate(${x}px,${y}px)`;
+    // ✅ Calendar link generator (Google Calendar prefilled)
+    // Feb 14 (all-day): start 2026-02-14 to 2026-02-15 (end is exclusive)
+    const makeGoogleCalLink = () => {
+      const title = encodeURIComponent("Valentine’s Date 💘");
+      const details = encodeURIComponent("North End, Boston — you choose the restaurant. 💕");
+      const location = encodeURIComponent("North End, Boston");
+      const dates = "20260214/20260215"; // all-day event
+      return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${dates}`;
+    };
+    document.getElementById('calendarLink').href = makeGoogleCalLink();
+
+    // YES flow: heartbeat + confetti + fade-in secret + longer second secret
+    const note = document.getElementById('note');
+    const secretBox = document.getElementById('secretBox');
+
+    document.getElementById('yesBtn').addEventListener('click', () => {
+      // ✅ Soft heartbeat
+      const hb = document.getElementById('heartbeat');
+      hb.volume = 0.25;
+      hb.currentTime = 0;
+      hb.play().catch(()=>{ /* autoplay can be blocked until interaction; click counts as interaction */ });
+
+      // ✅ Gentler toast
+      showToast("I’m really happy you said yes 💖", 3200);
+
+      // ✅ Confetti hearts
+      confettiHearts();
+
+      // ✅ Update the note (optional)
+      note.innerHTML =
+        "Secret unlocked ✨: You just made me *ridiculously* happy.<br/>" +
+        "Now for the real question…<br/>" +
+        "<b>When are you free for a date? 🥂</b>";
+
+      // ✅ Fade in the secret box
+      secretBox.classList.add('show');
+
+      // ✅ Second secret message (stays longer)
+      setTimeout(() => {
+        showToast("Secret #2 💌: CAN'T WAIT TO CELEBRATE OUR FIRST VALENTINE IN PERSON 💖💖💖", 5200);
+      }, 1400);
     });
 
-    // Calendar link
-    function buildCalendar(){
-      const title="Valentine’s Date 💘";
-      const details="You said YES 😘 — North End date on Feb 14. You pick the restaurant, anything my love wants.";
-      const dates="20260214/20260215";
-      const location="North End, Boston";
-
-      return "https://calendar.google.com/calendar/render?action=TEMPLATE"
-        +"&text="+encodeURIComponent(title)
-        +"&details="+encodeURIComponent(details)
-        +"&dates="+encodeURIComponent(dates)
-        +"&location="+encodeURIComponent(location);
-    }
-
-    // YES button
-    document.getElementById("yesBtn").addEventListener("click",()=>{
-      showToast("YAY!! 💖 YOU ARE MINE NOW 😘");
-      document.getElementById("note").innerHTML =
-        "Secret unlocked ✨ Now for the real question…<br/><b>When are you free? 🥂</b>";
-      document.getElementById("secret").style.display="block";
-      document.getElementById("calLink").href=buildCalendar();
-    });
+    // NO button runs away 😏 (on hover + on touch)
+    const noBtn = document.getElementById('noBtn');
+    const dodge = () => {
+      const dx = (Math.random() * 260 - 130);
+      const dy = (Math.random() * 140 - 70);
+      noBtn.style.transform = `translate(${dx}px, ${dy}px)`;
+      setTimeout(() => noBtn.style.transform = 'translate(0,0)', 900);
+    };
+    noBtn.addEventListener('mouseenter', dodge);
+    noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); dodge(); }, {passive:false});
+    noBtn.addEventListener('click', () => showToast("Nice try 😄", 1800));
   </script>
-
 </body>
 </html>
