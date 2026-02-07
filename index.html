@@ -100,6 +100,8 @@
       border-radius: 14px;
       font-weight: 800;
       font-size: 16px;
+      -webkit-tap-highlight-color: transparent;
+      user-select:none;
     }
 
     .yes{
@@ -132,20 +134,6 @@
     }
     .sig b{ color:#ffd36b; }
 
-    /* Music toggle */
-    .music{
-      position:absolute;
-      top: 10px;
-      right: 10px;
-      padding:8px 10px;
-      border-radius:999px;
-      background:#0c0010b0;
-      border:1px solid #ffffff24;
-      font-size:13px;
-      font-weight:800;
-      cursor:pointer;
-    }
-
     .toast{
       position:fixed;
       left:50%;
@@ -157,8 +145,37 @@
       border-radius: 14px;
       opacity:0;
       transition: opacity .25s ease, transform .25s ease;
+      pointer-events:none;
+      z-index: 9;
+      max-width:92vw;
+      text-align:center;
     }
     .toast.show{ opacity:1; transform:translateX(-50%) translateY(-6px); }
+
+    /* 💖 Special love moment banner (top of screen) */
+    .moment{
+      position: fixed;
+      top: 22px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px);
+      background: linear-gradient(135deg, #ff9bd1, #ffd36b);
+      color: #2a0030;
+      padding: 18px 22px;
+      border-radius: 18px;
+      font-size: clamp(18px, 4vw, 24px);
+      font-weight: 900;
+      text-align: center;
+      box-shadow: 0 20px 50px #0005;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .6s ease, transform .6s ease;
+      z-index: 10;
+      max-width: 92vw;
+    }
+    .moment.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
   </style>
 </head>
 
@@ -166,8 +183,6 @@
 
 <div class="wrap">
   <div class="card">
-
-    <div class="music" id="musicBtn">Play ♪</div>
 
     <div class="big-heart"></div>
 
@@ -188,9 +203,11 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="moment" id="moment"></div>
 
-<audio id="bgm" loop preload="auto">
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_9c2d7c1f4c.mp3?filename=romantic-ambient-11157.mp3">
+<!-- 🎶 Background music (starts automatically when he clicks YES) -->
+<audio id="bgm" loop preload="auto" crossorigin="anonymous">
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_9c2d7c1f4c.mp3?filename=romantic-ambient-11157.mp3" type="audio/mpeg">
 </audio>
 
 <script>
@@ -202,6 +219,11 @@
     h.style.width = h.style.height = size+'px';
     h.style.left = Math.random()*100+'vw';
     h.style.animationDuration = (Math.random()*6 + 6)+'s';
+    h.style.opacity = (Math.random() * 0.18 + 0.10).toFixed(2);
+
+    const colors = ['#ff2d55', '#ff4da6', '#ffd36b'];
+    h.style.background = colors[Math.floor(Math.random()*colors.length)];
+
     document.body.appendChild(h);
     setTimeout(()=>h.remove(),12000);
   };
@@ -209,54 +231,113 @@
 
   /* Toast */
   const toast = document.getElementById('toast');
-  const showToast = (msg, ms=4000) => {
+  const showToast = (msg, ms=4200) => {
     toast.textContent = msg;
     toast.classList.add('show');
-    setTimeout(()=>toast.classList.remove('show'), ms);
+    clearTimeout(window.__toastTimer);
+    window.__toastTimer = setTimeout(()=>toast.classList.remove('show'), ms);
   };
 
-  /* Confetti */
+  /* Moment banner (top) */
+  const momentBox = document.getElementById('moment');
+  const showMoment = (msg, ms=5200) => {
+    momentBox.textContent = msg;
+    momentBox.classList.add('show');
+    clearTimeout(window.__momentTimer);
+    window.__momentTimer = setTimeout(()=>momentBox.classList.remove('show'), ms);
+  };
+
+  /* Confetti hearts */
   function confetti(){
-    for(let i=0;i<22;i++){
+    for(let i=0;i<24;i++){
       const c=document.createElement('div');
       c.className='heart';
-      c.style.left='50vw';
-      c.style.top='65vh';
-      c.style.animationDuration='1.6s';
+      const size = Math.random()*12 + 10;
+      c.style.width = c.style.height = size+'px';
+      c.style.left = (50 + (Math.random()*10-5)) + 'vw';
+      c.style.top = '65vh';
+      c.style.opacity = 0.65;
+      c.style.animationDuration = (Math.random()*1.6 + 1.3) + 's';
+      c.style.transform = `translate(${Math.random()*520-260}px, ${Math.random()*-360-160}px) rotate(45deg)`;
       document.body.appendChild(c);
       setTimeout(()=>c.remove(),2000);
     }
   }
 
-  /* Music toggle */
+  /* ✅ Robust auto-start music on YES (MP3 first, synth fallback) */
   const bgm = document.getElementById('bgm');
-  const musicBtn = document.getElementById('musicBtn');
-  let playing = false;
+  let musicStarted = false;
 
-  musicBtn.onclick = async () => {
-    if(!playing){
+  // WebAudio fallback (gentle “romantic pad”)
+  let audioCtx = null;
+  let padOsc1 = null, padOsc2 = null, padGain = null;
+
+  function startPad(){
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+
+    if (padOsc1) return; // already running
+
+    padGain = audioCtx.createGain();
+    padGain.gain.value = 0.0;
+    padGain.connect(audioCtx.destination);
+
+    padOsc1 = audioCtx.createOscillator();
+    padOsc2 = audioCtx.createOscillator();
+    padOsc1.type = "sine";
+    padOsc2.type = "triangle";
+
+    padOsc1.frequency.value = 220;     // A3
+    padOsc2.frequency.value = 329.63;  // E4
+
+    padOsc1.connect(padGain);
+    padOsc2.connect(padGain);
+
+    padOsc1.start();
+    padOsc2.start();
+
+    padGain.gain.setTargetAtTime(0.08, audioCtx.currentTime, 0.25);
+  }
+
+  async function startRomanticMusic(){
+    if (musicStarted) return;
+    musicStarted = true;
+
+    try{
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === "suspended") await audioCtx.resume();
+
       bgm.volume = 0.18;
+      bgm.currentTime = 0;
       await bgm.play();
-      musicBtn.textContent = "Pause ❚❚";
-      playing = true;
-    } else {
-      bgm.pause();
-      musicBtn.textContent = "Play ♪";
-      playing = false;
+    } catch(e){
+      startPad(); // fallback if MP3 blocked
     }
-  };
+  }
 
-  /* NO button dodge */
+  /* NO button dodge (bigger jumps, ramps up) */
   const noBtn = document.getElementById('noBtn');
   let dodgeLevel = 0;
+
   const dodge = () => {
     dodgeLevel++;
-    const dx = Math.random()*400 - 200;
-    const dy = Math.random()*240 - 120;
-    noBtn.style.transform = `translate(${dx}px, ${dy}px)`;
-    setTimeout(()=>noBtn.style.transform='translate(0,0)',900);
+
+    const maxX = Math.min(180 + dodgeLevel * 70, 900);
+    const maxY = Math.min(110 + dodgeLevel * 45, 520);
+
+    const dx = (Math.random() * (maxX * 2) - maxX);
+    const dy = (Math.random() * (maxY * 2) - maxY);
+
+    noBtn.style.transform = `translate(${dx}px, ${dy}px) rotate(${(Math.random()*10-5).toFixed(1)}deg)`;
+
+    if (dodgeLevel === 4) showToast("Determined, aren’t you? 😏", 2400);
+    if (dodgeLevel === 7) showToast("Okay okay… nice try 😄", 2400);
+
+    setTimeout(()=>noBtn.style.transform='translate(0,0) rotate(0deg)', 900);
   };
+
   noBtn.onmouseenter = dodge;
+  noBtn.ontouchstart = (e) => { e.preventDefault(); dodge(); };
   noBtn.onclick = () => showToast("Nice try 😄", 1800);
 
   /* YES logic */
@@ -264,18 +345,20 @@
   const note = document.getElementById('note');
 
   document.getElementById('yesBtn').onclick = () => {
+    startRomanticMusic(); // 🎶 starts when he clicks YES
+
     yesClicks++;
 
     if(yesClicks === 1){
       showToast("I wouldn’t want this with anyone else 💖", 4200);
     } else {
-      showToast("Almost seven years, and I still get butterflies 💖", 5200);
+      showMoment("Almost seven years, and I still get butterflies 💖", 5200);
     }
 
     confetti();
 
     note.innerHTML = `
-      <div style="margin-top:10px">
+      <div style="margin-top:10px;color:#ffffffc9; line-height:1.5">
         <b>Secret unlocked 💌</b><br/><br/>
         A little date plan, just for us…<br/>
         📍 North End, Boston<br/>
