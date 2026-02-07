@@ -5,56 +5,224 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>For James 💘</title>
   <style>
+    :root{
+      --bg1:#120014; --bg2:#3a0038;
+      --card:#ffffff12; --border:#ffffff26;
+      --text:#fff; --muted:#ffffffc9;
+      --pink:#ff4da6; --rose:#ff2d55; --gold:#ffd36b;
+    }
+    *{box-sizing:border-box}
     body{
-      margin:0;
-      min-height:100vh;
-      display:grid;
-      place-items:center;
+      margin:0; min-height:100vh; display:grid; place-items:center;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      color:#fff;
-      background: linear-gradient(160deg,#120014,#3a0038);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 15%, #6b004f55 0%, transparent 60%),
+        radial-gradient(1000px 650px at 80% 20%, #ff4da644 0%, transparent 60%),
+        linear-gradient(160deg,var(--bg1),var(--bg2));
+      overflow:hidden;
     }
+
+    /* floating hearts */
+    .heart{
+      position:absolute;
+      width:18px; height:18px;
+      transform:rotate(45deg);
+      background: var(--rose);
+      opacity:.20;
+      filter: drop-shadow(0 10px 18px #0008);
+      animation: floatUp linear infinite;
+      pointer-events:none;
+    }
+    .heart::before,.heart::after{
+      content:"";
+      position:absolute;
+      width:18px; height:18px;
+      border-radius:50%;
+      background: var(--rose);
+    }
+    .heart::before{ left:-9px; top:0 }
+    .heart::after{ left:0; top:-9px }
+    @keyframes floatUp{
+      from{ transform: translateY(35vh) rotate(45deg) scale(.9); }
+      to  { transform: translateY(-130vh) rotate(45deg) scale(1.25); }
+    }
+
+    .wrap{ width:min(760px,92vw); padding:24px; }
     .card{
-      background:#ffffff14;
-      border:1px solid #ffffff2a;
-      border-radius:26px;
-      padding:28px 22px;
+      position:relative;
+      background: linear-gradient(180deg, #ffffff18, #ffffff0b);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      padding: 28px 22px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 18px 60px #0007;
       text-align:center;
-      box-shadow:0 18px 60px #0007;
-      max-width:720px;
-      width:92vw;
+      overflow:hidden;
     }
-    h1{margin:0 0 12px;font-size:42px}
-    p{margin:0 0 14px;font-size:18px}
-    .buttons{display:flex;gap:12px;justify-content:center;margin-top:16px}
+    .sparkle{
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(600px 240px at 10% 10%, #ffd36b22, transparent 60%),
+        radial-gradient(520px 220px at 90% 30%, #ff4da622, transparent 60%);
+      pointer-events:none;
+    }
+
+    .big-heart{
+      width:86px; height:86px; margin: 4px auto 16px;
+      transform: rotate(45deg);
+      background: linear-gradient(135deg, var(--pink), var(--rose));
+      border-radius: 18px;
+      position:relative;
+      animation: pulse 1.2s ease-in-out infinite;
+      box-shadow: 0 14px 34px #ff2d5533;
+    }
+    .big-heart::before,.big-heart::after{
+      content:""; width:86px; height:86px; position:absolute; border-radius:50%;
+      background: linear-gradient(135deg, var(--pink), var(--rose));
+    }
+    .big-heart::before{ left:-43px; top:0 }
+    .big-heart::after{ left:0; top:-43px }
+    @keyframes pulse{ 0%,100%{ transform:rotate(45deg) scale(1)} 50%{ transform:rotate(45deg) scale(1.08)} }
+
+    h1{ margin:0 0 10px; font-size: clamp(28px, 5vw, 44px); }
+    p{ margin:0 0 14px; color:var(--muted); font-size: clamp(15px,2.6vw,18px); line-height:1.55; }
+    .q{ font-weight:800; color:#fff; font-size: clamp(18px,3.1vw,22px); margin-top:8px; }
+
+    .btns{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top: 14px; position:relative; }
     button{
-      padding:12px 16px;
-      border-radius:14px;
-      font-size:16px;
-      font-weight:bold;
-      cursor:pointer;
-      border:none;
+      border:0; cursor:pointer;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 16px;
+      transition: transform .12s ease, filter .12s ease;
+      user-select:none;
     }
-    .yes{background:#ffb3d9;color:#2a0030}
-    .no{background:#ffffff20;color:#fff}
+    button:active{ transform: translateY(1px) scale(.99); }
+
+    .yes{
+      background: linear-gradient(135deg, var(--gold), #ff9bd1);
+      color:#2a0030;
+      box-shadow: 0 14px 30px #ffd36b24;
+    }
+
+    /* NO button is positioned so it can "run away" */
+    .no{
+      background: #ffffff12;
+      color: #fff;
+      border: 1px solid #ffffff2a;
+      position: relative;
+      will-change: transform;
+    }
+
+    .note{
+      margin-top:14px; text-align:center; font-size: 14px; color:#ffffffa6;
+    }
+
+    .toast{
+      position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+      background:#0c0010cc; border:1px solid #ffffff24;
+      padding:10px 14px; border-radius: 12px;
+      opacity:0; pointer-events:none;
+      transition: opacity .22s ease, transform .22s ease;
+      backdrop-filter: blur(10px);
+      max-width: 92vw;
+    }
+    .toast.show{ opacity:1; transform:translateX(-50%) translateY(-6px); }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Hey James 💘</h1>
-    <p>I made you a tiny little corner of the internet for one important question…</p>
-    <p><strong>Will you be my Valentine? ❤️</strong></p>
 
-    <div class="buttons">
-      <button class="yes" onclick="sayYes()">YES! 🥰</button>
-      <button class="no">Not a chance 😌</button>
+  <div class="wrap">
+    <div class="card">
+      <div class="sparkle"></div>
+      <div class="big-heart" aria-hidden="true"></div>
+
+      <h1>Hi Love 💘</h1>
+      <p>I made you a tiny little corner of the internet for one important question…</p>
+      <p class="q">Will you be my Valentine? ❤️</p>
+
+      <div class="btns">
+        <button class="yes" id="yesBtn">YES! 🥰</button>
+        <button class="no" id="noBtn">Not a chance 😏</button>
+      </div>
+
+      <div class="note" id="note">(P.S. Try clicking “NO” 😌)</div>
     </div>
   </div>
 
+  <div class="toast" id="toast"></div>
+
   <script>
-    function sayYes(){
-      alert("YAY!! 💖 Screenshot this and send it to me 😘");
+    // Background floating hearts
+    const makeHeart = () => {
+      const h = document.createElement('div');
+      h.className = 'heart';
+      const size = Math.random() * 18 + 10; // 10–28
+      h.style.width = h.style.height = size + 'px';
+      h.style.left = (Math.random() * 100) + 'vw';
+      h.style.animationDuration = (Math.random() * 6 + 6) + 's';
+      h.style.opacity = (Math.random() * 0.18 + 0.10).toFixed(2);
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 13000);
+    };
+    for (let i=0;i<18;i++) setTimeout(makeHeart, i*260);
+    setInterval(makeHeart, 480);
+
+    // Toast helper
+    const toast = document.getElementById('toast');
+    const showToast = (msg) => {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2300);
+    };
+
+    // Mini confetti hearts burst
+    function confettiHearts(){
+      for(let i=0;i<18;i++){
+        const c = document.createElement('div');
+        c.className='heart';
+        const size = Math.random()*12 + 10;
+        c.style.width = c.style.height = size+'px';
+        c.style.left = (50 + (Math.random()*10-5)) + 'vw';
+        c.style.top = '70vh';
+        c.style.opacity = 0.6;
+        c.style.animationDuration = (Math.random()*1.6 + 1.3) + 's';
+        c.style.transform = `translate(${Math.random()*420-210}px, ${Math.random()*-300-140}px) rotate(45deg)`;
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(), 2500);
+      }
     }
+
+    // YES flow: message 1 + secret message 2
+    const note = document.getElementById('note');
+    document.getElementById('yesBtn').addEventListener('click', () => {
+      showToast("YAY!! 💖 YOU ARE MINE NOW 😘");
+      confettiHearts();
+
+      note.innerHTML =
+        "Secret unlocked ✨: You just made me *ridiculously* happy.<br/>" +
+        "Now for the real question…<br/>" +
+        "<b>When are you free for a date? 🥂</b>";
+
+      // second secret message after a short delay
+      setTimeout(() => {
+        showToast("Secret #2 💌: CAN'T WAIT TO CELEBRATE OUR FIRST VALENTINE IN PERSON 💖💖💖");
+      }, 1800);
+    });
+
+    // NO button runs away 😏 (on hover + on click)
+    const noBtn = document.getElementById('noBtn');
+    const dodge = () => {
+      const dx = (Math.random() * 260 - 130);
+      const dy = (Math.random() * 140 - 70);
+      noBtn.style.transform = `translate(${dx}px, ${dy}px)`;
+      setTimeout(() => noBtn.style.transform = 'translate(0,0)', 900);
+    };
+    noBtn.addEventListener('mouseenter', dodge);
+    noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); dodge(); }, {passive:false});
+    noBtn.addEventListener('click', () => showToast("Nice try 😄"));
   </script>
 </body>
 </html>
