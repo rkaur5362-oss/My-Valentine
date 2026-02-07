@@ -276,7 +276,7 @@
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === "suspended") audioCtx.resume();
 
-    if (padOsc1) return; // already running
+    if (padOsc1) return;
 
     padGain = audioCtx.createGain();
     padGain.gain.value = 0.0;
@@ -311,7 +311,7 @@
       bgm.currentTime = 0;
       await bgm.play();
     } catch(e){
-      startPad(); // fallback if MP3 blocked
+      startPad();
     }
   }
 
@@ -340,19 +340,23 @@
   noBtn.ontouchstart = (e) => { e.preventDefault(); dodge(); };
   noBtn.onclick = () => showToast("Nice try 😄", 1800);
 
-  /* YES logic */
-  let yesClicks = 0;
+  /* YES click (show both messages on FIRST YES, in your requested order) */
   const note = document.getElementById('note');
+  let firstYesDone = false;
 
   document.getElementById('yesBtn').onclick = () => {
     startRomanticMusic(); // 🎶 starts when he clicks YES
 
-    yesClicks++;
+    if (!firstYesDone){
+      firstYesDone = true;
 
-    if(yesClicks === 1){
-      showToast("I wouldn’t want this with anyone else 💖", 4200);
-    } else {
+      // 1) Big top moment FIRST
       showMoment("Almost seven years, and I still get butterflies 💖", 5200);
+
+      // 2) Soft toast after a short beat
+      setTimeout(() => {
+        showToast("I wouldn’t want this with anyone else 💖", 4200);
+      }, 700);
     }
 
     confetti();
