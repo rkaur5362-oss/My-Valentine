@@ -297,13 +297,13 @@ let dodgeLevel=0;
 
 const dodge=()=>{
   dodgeLevel++;
-  const maxX=Math.min(180+dodgeLevel*70,900);
-  const maxY=Math.min(110+dodgeLevel*45,520);
+  const maxX=Math.min(180+dodgeLevel*80,900);
+  const maxY=Math.min(110+dodgeLevel*55,520);
   const dx=Math.random()*maxX*2-maxX;
   const dy=Math.random()*maxY*2-maxY;
   noBtn.style.transform=`translate(${dx}px,${dy}px) rotate(${(Math.random()*10-5).toFixed(1)}deg)`;
-  if(dodgeLevel===4) showToast("Determined, aren’t you? 😏",2400);
-  if(dodgeLevel===7) showToast("Okay okay… nice try 😄",2400);
+  if(dodgeLevel===4) showToast("Determined, aren’t you? 😏",3400);
+  if(dodgeLevel===7) showToast("Okay okay… nice try 😄",3400);
   setTimeout(()=>noBtn.style.transform='translate(0,0) rotate(0deg)',900);
 };
 
@@ -323,7 +323,7 @@ document.getElementById('yesBtn').onclick=()=>{
     showMoment("Almost seven years, and I still get butterflies 💖", 7000);
 
     setTimeout(() => {
-      showToast("I wouldn’t want this with anyone else, love 💖", 4200, "moment");
+      showToast("I wouldn’t want this with anyone else, love, YOU ARE MY BABY HO! 💖", 5200, "moment");
     }, 1100);
   }
 
@@ -334,8 +334,8 @@ document.getElementById('yesBtn').onclick=()=>{
       <b>Secret unlocked 💌</b><br/><br/>
       A little date plan, just for us…<br/>
       📍 North End, Boston<br/>
-      🍝 <b>You choose the restaurant you’re craving</b><br/>
-      💕 And we’ll make the rest special together
+      🍝 <b>You choose the restaurant</b><br/>
+      💕 And we’ll make the rest special together 💕
     </div>
   `;
 };
