@@ -138,9 +138,11 @@ button{
   font-weight:900;
   box-shadow:0 20px 50px #0005;
   opacity:0;
-  transition:.6s ease;
   pointer-events:none;
   z-index:10;
+
+  /* slower fade */
+  transition: opacity 1.6s ease, transform 1.6s ease;
 }
 .moment.show{
   opacity:1;
@@ -188,6 +190,16 @@ button{
     0 10px 36px #ff9bd14a,
     inset 0 0 22px #ffffff55;
 }
+
+/* Toast that matches the moment banner */
+.toast.moment-match{
+  background: linear-gradient(135deg, #ff9bd1, #ffd36b);
+  color:#2a0030;
+  font-weight:800;
+  box-shadow:
+    0 12px 40px #ffd36b55,
+    inset 0 0 20px #ffffff66;
+}
 </style>
 </head>
 
@@ -232,21 +244,29 @@ setInterval(()=>{
 },480);
 
 /* Toast + moment */
-const toast=document.getElementById('toast');
-const momentBox=document.getElementById('moment');
+const toast = document.getElementById('toast');
+const momentBox = document.getElementById('moment');
 
-const showToast=(msg,ms=4200,theme="default")=>{
-  toast.textContent=msg;
-  toast.className="toast";
-  if(theme==="love") toast.classList.add("love");
+const showToast = (msg, ms = 4200, theme = "default") => {
+  toast.textContent = msg;
+
+  toast.className = "toast";
+  if (theme === "love") toast.classList.add("love");
+  if (theme === "moment") toast.classList.add("moment-match");
+
   toast.classList.add("show");
-  setTimeout(()=>toast.classList.remove("show","love"),ms);
+
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => {
+    toast.classList.remove("show", "love", "moment-match");
+  }, ms);
 };
 
-const showMoment=(msg,ms=5200)=>{
-  momentBox.textContent=msg;
+const showMoment = (msg, ms = 7000) => {
+  momentBox.textContent = msg;
   momentBox.classList.add("show");
-  setTimeout(()=>momentBox.classList.remove("show"),ms);
+  clearTimeout(window.__momentTimer);
+  window.__momentTimer = setTimeout(() => momentBox.classList.remove("show"), ms);
 };
 
 /* Confetti */
@@ -268,7 +288,7 @@ let musicStarted=false;
 async function startMusic(){
   if(musicStarted) return;
   musicStarted=true;
-  try{ await bgm.play(); }catch(e){}
+  try{ bgm.volume = 0.18; await bgm.play(); }catch(e){}
 }
 
 /* NO button dodge — ramps up */
@@ -298,28 +318,19 @@ const note=document.getElementById('note');
 document.getElementById('yesBtn').onclick=()=>{
   startMusic();
 
-if(!firstYes){
-  firstYes = true;
+  if(!firstYes){
+    firstYes=true;
+    showMoment("Almost seven years, and I still get butterflies 💖", 7000);
 
-  showMoment(
-    "Almost seven years, and I still get butterflies 💖",
-    7000
-  );
-
-  setTimeout(() => {
-    showToast(
-      "I wouldn’t want this with anyone else, love 💖",
-      5200,
-      "love"
-    );
-  }, 1100);
-}
-
+    setTimeout(() => {
+      showToast("I wouldn’t want this with anyone else, love 💖", 4200, "moment");
+    }, 1100);
+  }
 
   confetti();
 
   note.innerHTML=`
-    <div style="margin-top:10px">
+    <div style="margin-top:10px;color:#ffffffc9; line-height:1.5">
       <b>Secret unlocked 💌</b><br/><br/>
       A little date plan, just for us…<br/>
       📍 North End, Boston<br/>
@@ -332,4 +343,3 @@ if(!firstYes){
 
 </body>
 </html>
-
