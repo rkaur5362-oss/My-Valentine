@@ -298,15 +298,23 @@ const note=document.getElementById('note');
 document.getElementById('yesBtn').onclick=()=>{
   startMusic();
 
-  if(!firstYes){
-    firstYes=true;
-    showMoment("Almost seven years, and I still get butterflies 💖",5200);
-    setTimeout(()=>showToast(
-      "I wouldn’t want this with anyone else 💖",
-      4200,
+if(!firstYes){
+  firstYes = true;
+
+  showMoment(
+    "Almost seven years, and I still get butterflies 💖",
+    7000
+  );
+
+  setTimeout(() => {
+    showToast(
+      "I wouldn’t want this with anyone else, love 💖",
+      5200,
       "love"
-    ),700);
-  }
+    );
+  }, 1100);
+}
+
 
   confetti();
 
